@@ -1,31 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Coaching Intake Form</title>
+  <title>Redirecting to Form</title>
 
-  <!-- Google Analytics 4 tracking code -->
+  <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELYQ58JY60"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
-    // Configure GA4
-    gtag('config', 'G-ELYQ58JY60');
+    gtag('config', 'G-ELYQ58JY60'); // Replace with your GA4 ID
   </script>
 </head>
 <body>
-  <p>Loading Intake Form...</p>
+  <p>Redirecting to the form...</p>
 
   <script>
-    // Collect basic client info
     const userAgent = navigator.userAgent;
     const language = navigator.language;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const screenSize = screen.width + "x" + screen.height;
 
-    // Send a custom GA4 event for form opens
+    // Send GA4 event
     gtag('event', 'form_open', {
       'user_agent': userAgent,
       'language': language,
@@ -33,10 +30,20 @@
       'screen_size': screenSize
     });
 
-    // Redirect immediately to your Google Form
+    // Send data to Google Sheets via Web App
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxwDCvJIqzJ9C8CTCNZ5Ubh1fsVhgat86rl40AGgpHXXdMEIWSiD42vNgGWxRd2H4_LXg/exec"; // Replace with your Apps Script URL
+    const params = new URLSearchParams({
+      userAgent,
+      language,
+      timezone,
+      screenSize
+    });
+    fetch(`${webAppUrl}?${params.toString()}`).catch(err => console.log("Error logging to sheet:", err));
+
+    // Redirect after tiny delay to ensure GA4 and sheet logging fire
     setTimeout(() => {
-      window.location.href = "https://docs.google.com/forms/d/1kJud7OqceQYu4-AR81xhWa1sl7Rncvoq9irg_UP4cis/viewform";
-    }, 200); // 200ms delay ensures GA4 loads
+      window.location.href = "https://docs.google.com/forms/d/kJud7OqceQYu4-AR81xhWa1sl7Rncvoq9irg_UP4cis/viewform"; // Replace with your form
+    }, 150);
   </script>
 </body>
 </html>
