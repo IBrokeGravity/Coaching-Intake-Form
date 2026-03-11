@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Redirecting to Form</title>
+  <title>Loading Form</title>
 
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELYQ58JY60"></script>
@@ -17,33 +17,35 @@
   <p>Redirecting to the form...</p>
 
   <script>
-    const userAgent = navigator.userAgent;
-    const language = navigator.language;
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const screenSize = screen.width + "x" + screen.height;
+    // Visitor info
+    const userAgent = encodeURIComponent(navigator.userAgent);
+    const language = encodeURIComponent(navigator.language);
+    const timezone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    const screenSize = encodeURIComponent(screen.width + "x" + screen.height);
 
     // Send GA4 event
     gtag('event', 'form_open', {
-      'user_agent': userAgent,
-      'language': language,
-      'timezone': timezone,
-      'screen_size': screenSize
+      'user_agent': decodeURIComponent(userAgent),
+      'language': decodeURIComponent(language),
+      'timezone': decodeURIComponent(timezone),
+      'screen_size': decodeURIComponent(screenSize)
     });
 
-    // Send data to Google Sheets via Web App
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbxwDCvJIqzJ9C8CTCNZ5Ubh1fsVhgat86rl40AGgpHXXdMEIWSiD42vNgGWxRd2H4_LXg/exec"; // Replace with your Apps Script URL
-    const params = new URLSearchParams({
-      userAgent,
-      language,
-      timezone,
-      screenSize
-    });
-    fetch(`${webAppUrl}?${params.toString()}`).catch(err => console.log("Error logging to sheet:", err));
+    // Mobile-safe logging to Google Sheet
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxwDCvJIqzJ9C8CTCNZ5Ubh1fsVhgat86rl40AGgpHXXdMEIWSiD42vNgGWxRd2H4_LXg/exec"; // Replace with your Apps Script URLL
+    const urlWithParams = `${webAppUrl}?userAgent=${userAgent}&language=${language}&timezone=${timezone}&screenSize=${screenSize}`;
 
-    // Redirect after tiny delay to ensure GA4 and sheet logging fire
+    // Use fetch but ensure it finishes before redirect
+    fetch(urlWithParams)
+      .finally(() => {
+        // Redirect after logging completes
+        window.location.href = "https://docs.google.com/forms/d/1kJud7OqceQYu4-AR81xhWa1sl7Rncvoq9irg_UP4cis/viewform";
+      });
+
+    // Fallback: in case fetch hangs (some mobile browsers block fetch)
     setTimeout(() => {
       window.location.href = "https://docs.google.com/forms/d/1kJud7OqceQYu4-AR81xhWa1sl7Rncvoq9irg_UP4cis/viewform";
-    }, 150);
+    }, 1000); // 1 second fallback
   </script>
 </body>
 </html>
