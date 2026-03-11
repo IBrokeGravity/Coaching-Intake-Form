@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting to Form</title>
+
+  <!-- Google Analytics 4 tracking code -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_GA4_MEASUREMENT_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    // Configure GA4
+    gtag('config', 'YOUR_GA4_MEASUREMENT_ID');
+  </script>
+</head>
+<body>
+  <p>Redirecting to the form...</p>
+
+  <script>
+    // Collect basic client info
+    const userAgent = navigator.userAgent;
+    const language = navigator.language;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const screenSize = screen.width + "x" + screen.height;
+
+    // Send a custom GA4 event for form opens
+    gtag('event', 'form_open', {
+      'user_agent': userAgent,
+      'language': language,
+      'timezone': timezone,
+      'screen_size': screenSize
+    });
+
+    // Redirect immediately to your Google Form
+    window.location.href = "https://docs.google.com/forms/d/YOUR_FORM_ID/viewform";
+  </script>
+</body>
+</html>
