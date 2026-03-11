@@ -17,7 +17,7 @@
   <p>Loading Form...</p>
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbx1NPPTQXuXjLPLYpOFcj6vML_Zpgf1tx1O9FKrH0ygRh8t9QTip7-wTbSblwOiJYYA3w/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyoTVQYzM_mF6Om_XGiqS8E3N5fZkdDnk7yj_rszk2Ma6gIG63S0GzYf2vhfdlTbaJ6Iw/exec";
 
 const formURL =
 "https://docs.google.com/forms/d/1kJud7OqceQYu4-AR81xhWa1sl7Rncvoq9irg_UP4cis/viewform";
@@ -32,33 +32,33 @@ const params =
 
 const fullURL = scriptURL + params;
 
+let logged = false;
 
-/* 1️⃣ Primary method: sendBeacon (best for redirects) */
+function logVisit() {
 
-if (navigator.sendBeacon) {
+  if (logged) return;
+  logged = true;
+
+  if (navigator.sendBeacon) {
+    try {
+      navigator.sendBeacon(fullURL);
+      return;
+    } catch(e) {}
+  }
+
   try {
-    navigator.sendBeacon(fullURL);
+    fetch(fullURL, {mode:"no-cors"}).catch(()=>{});
+    return;
   } catch(e) {}
+
+  try {
+    const img = new Image();
+    img.src = fullURL;
+  } catch(e) {}
+
 }
 
-
-/* 2️⃣ Secondary method: fetch */
-
-try {
-  fetch(fullURL, {mode:"no-cors"}).catch(()=>{});
-} catch(e) {}
-
-
-/* 3️⃣ Third method: tracking pixel */
-
-try {
-  const img = new Image();
-  img.src = fullURL;
-} catch(e) {}
-
-
-
-/* Redirect to form */
+logVisit();
 
 setTimeout(function(){
   window.location.href = formURL;
