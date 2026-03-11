@@ -15,37 +15,55 @@
 </head>
 <body>
   <p>Loading Form...</p>
+<script>
 
-  <script>
-    // Visitor info
-    const userAgent = encodeURIComponent(navigator.userAgent);
-    const language = encodeURIComponent(navigator.language);
-    const timezone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const screenSize = encodeURIComponent(screen.width + "x" + screen.height);
+const scriptURL = "YOUR_WEBAPP_EXEC_URL";
 
-    // Send GA4 event
-    gtag('event', 'form_open', {
-      'user_agent': decodeURIComponent(userAgent),
-      'language': decodeURIComponent(language),
-      'timezone': decodeURIComponent(timezone),
-      'screen_size': decodeURIComponent(screenSize)
-    });
+const formURL =
+"https://docs.google.com/forms/d/1kJud7OqceQYu4-AR81xhWa1sl7Rncvoq9irg_UP4cis/viewform";
 
-    // Mobile-safe logging to Google Sheet
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbx1NPPTQXuXjLPLYpOFcj6vML_Zpgf1tx1O9FKrH0ygRh8t9QTip7-wTbSblwOiJYYA3w/exec"; // Replace with your Apps Script URLL
-    const urlWithParams = `${webAppUrl}?userAgent=${userAgent}&language=${language}&timezone=${timezone}&screenSize=${screenSize}`;
 
-    // Use fetch but ensure it finishes before redirect
-    fetch(urlWithParams)
-      .finally(() => {
-        // Redirect after logging completes
-        window.location.href = "https://docs.google.com/forms/d/1kJud7OqceQYu4-AR81xhWa1sl7Rncvoq9irg_UP4cis/viewform";
-      });
+const params =
+"?userAgent=" + encodeURIComponent(navigator.userAgent) +
+"&language=" + encodeURIComponent(navigator.language) +
+"&timezone=" + encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone) +
+"&screenSize=" + encodeURIComponent(screen.width + "x" + screen.height);
 
-    // Fallback: in case fetch hangs (some mobile browsers block fetch)
-    setTimeout(() => {
-      window.location.href = "https://docs.google.com/forms/d/1kJud7OqceQYu4-AR81xhWa1sl7Rncvoq9irg_UP4cis/viewform";
-    }, 1000); // 1 second fallback
-  </script>
+
+const fullURL = scriptURL + params;
+
+
+/* 1️⃣ Primary method: sendBeacon (best for redirects) */
+
+if (navigator.sendBeacon) {
+  try {
+    navigator.sendBeacon(fullURL);
+  } catch(e) {}
+}
+
+
+/* 2️⃣ Secondary method: fetch */
+
+try {
+  fetch(fullURL, {mode:"no-cors"}).catch(()=>{});
+} catch(e) {}
+
+
+/* 3️⃣ Third method: tracking pixel */
+
+try {
+  const img = new Image();
+  img.src = fullURL;
+} catch(e) {}
+
+
+
+/* Redirect to form */
+
+setTimeout(function(){
+  window.location.href = formURL;
+}, 400);
+
+</script>
 </body>
 </html>
